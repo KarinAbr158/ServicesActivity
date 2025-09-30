@@ -26,11 +26,12 @@ public class MainActivity extends AppCompatActivity {
         });
         play = findViewById(R.id.playBtn);
         stop = findViewById(R.id.stopBtn);
-        
+
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(MainActivity.this, AudioService.class);
+                i.setAction("PLAY");
                 startService(i);
             }
         });
@@ -38,7 +39,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(MainActivity.this, AudioService.class);
-                stopService(i);
+                i.setAction("STOP");
+                startService(i);
             }
         });
     }

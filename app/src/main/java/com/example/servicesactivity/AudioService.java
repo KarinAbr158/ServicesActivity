@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
@@ -33,7 +34,15 @@ public class AudioService extends Service {
     }
     public AudioService() {
     }
+    MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.final_countdown);
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.d("MediaService", "onCreate called");
+        mediaPlayer = MediaPlayer.create(this, R.raw.final_countdown);
+        mediaPlayer.setLooping(false);
+    }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
@@ -47,19 +56,37 @@ public class AudioService extends Service {
                 .build();
 
         startForeground(1, notification);
+        if (intent != null) {
+            String action = intent.getAction();
+            if ("PLAY".equals(action)) {
+                if (mediaPlayer != null) {
+                    if (!mediaPlayer.isPlaying()) {
+                        mediaPlayer.start();
+                    }
+                }
+            } else if ("STOP".equals(action)) {
+                if (mediaPlayer != null) {
+                    if (mediaPlayer.isPlaying()) {
+                        mediaPlayer.pause();
+                    }
+                    mediaPlayer.seekTo(0); // rewind to beginning
+                }
+            }
+        }
         return START_STICKY;
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Log.d("MediaService", "onCreate called");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         Log.d("MediaService", "onDestroy called");
+        if (mediaPlayer != null) {
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.stop();
+            }
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 
     @Override
