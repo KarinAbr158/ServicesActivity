@@ -34,12 +34,13 @@ public class AudioService extends Service {
     }
     public AudioService() {
     }
-    MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.final_countdown);
 
+    MediaPlayer mediaPlayer;
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d("MediaService", "onCreate called");
+        mediaPlayer = MediaPlayer.create(this, R.raw.final_countdown);
         mediaPlayer = MediaPlayer.create(this, R.raw.final_countdown);
         mediaPlayer.setLooping(false);
     }
